@@ -1,16 +1,16 @@
-#include<iostream>
-using namespace std;
-int sum(int a[],int n)
-{
-int sum =0;
-for(int i=0;i<n;i++)
-{
-    sum=sum+a[i];
-}
-return sum;
-}
-int main()
-{
-    int a[5,10,28,30,50];
-    cout<<sum(a,5);
+public class Main {
+
+     public static int sum(int[] v) {
+            int s = 0;
+            for (int x : v) {
+                s += x;
+            }
+            return s;
+        }
+
+    public static void main(String[] args) {
+        int[] v = {4, 8, 15, 16, 23};
+
+       System.out.println("Suma: " + sum(v));
+    }
 }
