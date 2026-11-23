@@ -1,0 +1,76 @@
+---
+title: FireEvac — diagrama use case (focul și senzorii sunt simulați)
+config:
+  layout: elk
+---
+%% Mermaid nu are diagrame use case native: actorii sunt noduri cu 👤, cazurile de utilizare sunt
+%% elipse (stadium), granița sistemului e subgraph-ul FireEvac, iar «include»/«extend» sunt săgeți punctate.
+flowchart LR
+    O["👤<br/><b>Ocupant</b>"]
+    P["👤<br/><b>Pompier</b>"]
+    A["👤<br/><b>Administrator</b>"]
+    T["👤<br/><b>Ceasul simulării</b><br/>«sistem»"]
+
+    subgraph FireEvac["FireEvac"]
+        UC_HARTA(["Alege clădirea pe hartă"])
+        UC_LOC(["Indică locația<br/>(etaj, cameră sau punct pe plan)"])
+        UC_RUTA(["Vede ruta de evacuare"])
+        UC_CALC(["Calculează ruta sigură<br/>(ocolește focul, pe etaje)"])
+        UC_SCARI(["Coboară pe scări<br/>(„Am coborât”)"])
+        UC_GEAM(["Iese pe geam la parter<br/>(ultima soluție)"])
+        UC_ALERTE(["Primește alerte<br/>(drum schimbat, foc dedesubt)"])
+        UC_SAFE(["Raportează „Sunt în siguranță”"])
+        UC_HELP(["Cere ajutor<br/>(„Am nevoie de ajutor”)"])
+        UC_RAPORT(["Raportează fum / drum blocat"])
+
+        UC_DISP(["Urmărește focul live<br/>(dispecerat)"])
+        UC_PERS(["Vede persoanele care cer ajutor"])
+        UC_SALV(["Vede ruta de intervenție<br/>spre o persoană"])
+        UC_REPLAY(["Revede incendiul (replay)"])
+        UC_AUTH(["Se autentifică cu cod"])
+        UC_IMPORT(["Importă planul unui etaj<br/>(din DXF)"])
+        UC_SIM(["Pornește / oprește / resetează<br/>simularea incendiului"])
+        UC_INC(["Vede incidentele și cauzele lor"])
+        UC_FOC(["Extinde focul simulat<br/>(pe etaj și prin casa scării)"])
+    end
+
+    %% Ocupant
+    O --- UC_HARTA
+    O --- UC_LOC
+    O --- UC_RUTA
+    O --- UC_ALERTE
+    O --- UC_SAFE
+    O --- UC_HELP
+    O --- UC_RAPORT
+
+    UC_RUTA -. "«include»" .-> UC_LOC
+    UC_RUTA -. "«include»" .-> UC_CALC
+    UC_SCARI -. "«extend»" .-> UC_RUTA
+    UC_GEAM -. "«extend»" .-> UC_RUTA
+
+    %% Pompier
+    UC_DISP --- P
+    UC_PERS --- P
+    UC_SALV --- P
+    UC_REPLAY --- P
+    UC_AUTH --- P
+    UC_SALV -. "«extend»" .-> UC_PERS
+
+    %% Administrator
+    UC_AUTH --- A
+    UC_IMPORT --- A
+    UC_SIM --- A
+    UC_INC --- A
+
+    %% Simularea
+    UC_FOC --- T
+    UC_SIM -. "«include»" .-> UC_FOC
+
+    classDef actor fill:#FFF4D6,stroke:#7A1F3D,stroke-width:2px,color:#111
+    classDef uc fill:#F5F9FF,stroke:#2F5597,stroke-width:1.5px,color:#111
+    classDef sys fill:#FFF7E6,stroke:#2F5597,stroke-width:1.5px,color:#111
+    class O,P,A,T actor
+    class UC_HARTA,UC_LOC,UC_RUTA,UC_CALC,UC_SCARI,UC_GEAM,UC_ALERTE,UC_SAFE,UC_HELP,UC_RAPORT uc
+    class UC_DISP,UC_PERS,UC_SALV,UC_REPLAY,UC_AUTH,UC_IMPORT,UC_SIM,UC_INC uc
+    class UC_FOC sys
+    style FireEvac fill:#FBFCFE,stroke:#2F5597,stroke-width:2px
